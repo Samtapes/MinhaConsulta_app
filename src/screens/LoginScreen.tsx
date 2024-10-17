@@ -21,7 +21,8 @@ const LoginScreen = ({ navigation }: Props) => {
   const handleLogin = async () => {
     try {
       const token = await login(username, password);
-      console.log('Token:', token);
+      localStorage.setItem('token', token); // Armazena o token no Local Storage
+
       RNAlert.alert('Login realizado com sucesso!');
       navigation.navigate('ConsultationsList');
     } catch (err: unknown) {

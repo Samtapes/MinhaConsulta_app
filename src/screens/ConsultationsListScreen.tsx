@@ -8,17 +8,28 @@ interface Consultation {
   doctor: string;
   specialty: string;
   status: string;
-  username: string;
 }
 
 const ConsultationsListScreen = () => {
   const [consultations, setConsultations] = useState<Consultation[]>([]);
 
   useEffect(() => {
+    const token = localStorage.getItem('token'); // Recupera o token armazenado
+
+    if (!token) {
+      console.log('Usuário não autenticado');
+      return;
+    }
+
     // Fetch consultations from the backend
-    axios.get('http://localhost:3000/api/consultations')
+    axios
+      .get('http://localhost:3000/api/consultations', {
+        headers: {
+          Authorization: `Bearer ${token}`, // Adiciona o token no header
+        },
+      })
       .then((response) => {
-        setConsultations(response.data.consultations);
+        setConsultations(response.data); // Atualize esta linha para atribuir diretamente a resposta
       })
       .catch((error) => {
         console.error('Erro ao buscar consultas:', error);
@@ -27,7 +38,6 @@ const ConsultationsListScreen = () => {
 
   const renderItem = ({ item }: { item: Consultation }) => (
     <View style={styles.consultationItem}>
-      <Text>Paciente: {item.username}</Text>
       <Text>Data: {item.date}</Text>
       <Text>Médico: {item.doctor}</Text>
       <Text>Especialidade: {item.specialty}</Text>
